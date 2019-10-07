@@ -156,4 +156,19 @@ inline bool Game::launchURL(const char* url) const
     return Platform::launchURL(url);
 }
 
+inline const char * Game::getTemporaryFolderPath() const
+{
+    return Platform::getTemporaryFolderPath();
+}
+
+inline const char * Game::getDocumentsFolderPath() const
+{
+    return Platform::getDocumentsFolderPath();
+}
+
+inline const char * Game::getAppPrivateFolderPath() const
+{
+    return Platform::getAppPrivateFolderPath();
+}
+
 }

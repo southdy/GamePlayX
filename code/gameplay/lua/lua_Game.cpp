@@ -790,6 +790,41 @@ static int lua_Game_getAnimationController(lua_State* state)
     return 0;
 }
 
+static int lua_Game_getAppPrivateFolderPath(lua_State* state)
+{
+    // Get the number of parameters.
+    int paramCount = lua_gettop(state);
+
+    // Attempt to match the parameters to a valid binding.
+    switch (paramCount)
+    {
+        case 1:
+        {
+            if ((lua_type(state, 1) == LUA_TUSERDATA))
+            {
+                Game* instance = getInstance(state);
+                const char* result = instance->getAppPrivateFolderPath();
+
+                // Push the return value onto the stack.
+                lua_pushstring(state, result);
+
+                return 1;
+            }
+
+            lua_pushstring(state, "lua_Game_getAppPrivateFolderPath - Failed to match the given parameters to a valid function signature.");
+            lua_error(state);
+            break;
+        }
+        default:
+        {
+            lua_pushstring(state, "Invalid number of parameters (expected 1).");
+            lua_error(state);
+            break;
+        }
+    }
+    return 0;
+}
+
 static int lua_Game_getAspectRatio(lua_State* state)
 {
     // Get the number of parameters.
@@ -944,6 +979,41 @@ static int lua_Game_getConfig(lua_State* state)
             }
 
             lua_pushstring(state, "lua_Game_getConfig - Failed to match the given parameters to a valid function signature.");
+            lua_error(state);
+            break;
+        }
+        default:
+        {
+            lua_pushstring(state, "Invalid number of parameters (expected 1).");
+            lua_error(state);
+            break;
+        }
+    }
+    return 0;
+}
+
+static int lua_Game_getDocumentsFolderPath(lua_State* state)
+{
+    // Get the number of parameters.
+    int paramCount = lua_gettop(state);
+
+    // Attempt to match the parameters to a valid binding.
+    switch (paramCount)
+    {
+        case 1:
+        {
+            if ((lua_type(state, 1) == LUA_TUSERDATA))
+            {
+                Game* instance = getInstance(state);
+                const char* result = instance->getDocumentsFolderPath();
+
+                // Push the return value onto the stack.
+                lua_pushstring(state, result);
+
+                return 1;
+            }
+
+            lua_pushstring(state, "lua_Game_getDocumentsFolderPath - Failed to match the given parameters to a valid function signature.");
             lua_error(state);
             break;
         }
@@ -1310,6 +1380,41 @@ static int lua_Game_getState(lua_State* state)
             }
 
             lua_pushstring(state, "lua_Game_getState - Failed to match the given parameters to a valid function signature.");
+            lua_error(state);
+            break;
+        }
+        default:
+        {
+            lua_pushstring(state, "Invalid number of parameters (expected 1).");
+            lua_error(state);
+            break;
+        }
+    }
+    return 0;
+}
+
+static int lua_Game_getTemporaryFolderPath(lua_State* state)
+{
+    // Get the number of parameters.
+    int paramCount = lua_gettop(state);
+
+    // Attempt to match the parameters to a valid binding.
+    switch (paramCount)
+    {
+        case 1:
+        {
+            if ((lua_type(state, 1) == LUA_TUSERDATA))
+            {
+                Game* instance = getInstance(state);
+                const char* result = instance->getTemporaryFolderPath();
+
+                // Push the return value onto the stack.
+                lua_pushstring(state, result);
+
+                return 1;
+            }
+
+            lua_pushstring(state, "lua_Game_getTemporaryFolderPath - Failed to match the given parameters to a valid function signature.");
             lua_error(state);
             break;
         }
@@ -2515,10 +2620,12 @@ void luaRegister_Game()
         {"getAIController", lua_Game_getAIController},
         {"getAccelerometerValues", lua_Game_getAccelerometerValues},
         {"getAnimationController", lua_Game_getAnimationController},
+        {"getAppPrivateFolderPath", lua_Game_getAppPrivateFolderPath},
         {"getAspectRatio", lua_Game_getAspectRatio},
         {"getAudioController", lua_Game_getAudioController},
         {"getAudioListener", lua_Game_getAudioListener},
         {"getConfig", lua_Game_getConfig},
+        {"getDocumentsFolderPath", lua_Game_getDocumentsFolderPath},
         {"getFrameRate", lua_Game_getFrameRate},
         {"getGamepad", lua_Game_getGamepad},
         {"getGamepadCount", lua_Game_getGamepadCount},
@@ -2527,6 +2634,7 @@ void luaRegister_Game()
         {"getScriptController", lua_Game_getScriptController},
         {"getSensorValues", lua_Game_getSensorValues},
         {"getState", lua_Game_getState},
+        {"getTemporaryFolderPath", lua_Game_getTemporaryFolderPath},
         {"getViewport", lua_Game_getViewport},
         {"getWidth", lua_Game_getWidth},
         {"hasAccelerometer", lua_Game_hasAccelerometer},

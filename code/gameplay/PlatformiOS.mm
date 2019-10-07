@@ -1727,7 +1727,48 @@ std::string Platform::displayFileDialog(size_t mode, const char* title, const ch
 {
     return "";
 }
- 
+
+const char * Platform::getTemporaryFolderPath()
+{
+    static std::string result;
+    result = [NSTemporaryDirectory() cStringUsingEncoding:NSASCIIStringEncoding];
+    return result.c_str();
+}
+
+const char * Platform::getDocumentsFolderPath()
+{
+    NSFileManager* sharedFM = [NSFileManager defaultManager];
+    NSArray* possibleURLs = [sharedFM URLsForDirectory:NSDocumentDirectory
+                                             inDomains:NSUserDomainMask];
+    NSURL* dir = nil;
+    
+    if ([possibleURLs count] >= 1) {
+        // Use the first directory (if multiple are returned)
+        dir = [possibleURLs objectAtIndex:0];
+    }
+    
+    static std::string result;
+    result = [dir.path cStringUsingEncoding:NSASCIIStringEncoding];
+    return result.c_str();
+}
+
+const char * Platform::getAppPrivateFolderPath()
+{
+    NSFileManager* sharedFM = [NSFileManager defaultManager];
+    NSArray* possibleURLs = [sharedFM URLsForDirectory:NSApplicationSupportDirectory
+                                             inDomains:NSUserDomainMask];
+    NSURL* appSupportDir = nil;
+    
+    if ([possibleURLs count] >= 1) {
+        // Use the first directory (if multiple are returned)
+        appSupportDir = [possibleURLs objectAtIndex:0];
+    }
+    
+    static std::string result;
+    result = [appSupportDir.path cStringUsingEncoding:NSASCIIStringEncoding];
+    return result.c_str();
+}
+
 }
 
 #endif

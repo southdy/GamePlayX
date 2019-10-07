@@ -1807,6 +1807,98 @@ std::string Platform::displayFileDialog(size_t mode, const char* title, const ch
     return "";
 }
 
+const char * Platform::getTemporaryFolderPath()
+{
+    static std::string result;
+
+    if (result.empty())
+    {
+        android_app* app = __state;
+        JNIEnv* env = app->activity->env;
+        JavaVM* vm = app->activity->vm;
+        vm->AttachCurrentThread(&env, NULL);
+
+        jclass classActivity = env->GetObjectClass(app->activity->clazz);
+
+        /* Get path to cache dir (/data/data/org.myapp/cache) */
+        jmethodID getCacheDir = env->GetMethodID(classActivity, "getCacheDir", "()Ljava/io/File;");
+        jobject file = env->CallObjectMethod(app->activity->clazz, getCacheDir);
+        jclass fileClass = env->FindClass("java/io/File");
+        jmethodID getAbsolutePath = env->GetMethodID(fileClass, "getAbsolutePath", "()Ljava/lang/String;");
+        jstring jpath = (jstring)env->CallObjectMethod(file, getAbsolutePath);
+        const char* app_dir = env->GetStringUTFChars(jpath, NULL);
+
+        result = app_dir;
+        result += "/";
+
+        env->ReleaseStringUTFChars(jpath, app_dir);
+
+        vm->DetachCurrentThread();
+    }
+
+    return result.c_str();
+}
+
+const char * Platform::getDocumentsFolderPath()
+{
+    static std::string result;
+
+    if (result.empty())
+    {
+        android_app* app = __state;
+        JNIEnv* env = app->activity->env;
+        JavaVM* vm = app->activity->vm;
+        vm->AttachCurrentThread(&env, NULL);
+
+        jclass classActivity = env->GetObjectClass(app->activity->clazz);
+
+        jmethodID getExternalFilesDir = env->GetMethodID(classActivity, "getExternalFilesDir", "(Ljava/lang/String;)Ljava/io/File;");
+        jobject file = env->CallObjectMethod(app->activity->clazz, getExternalFilesDir, NULL);
+        jclass fileClass = env->FindClass("java/io/File");
+        jmethodID getAbsolutePath = env->GetMethodID(fileClass, "getAbsolutePath", "()Ljava/lang/String;");
+        jstring jpath = (jstring)env->CallObjectMethod(file, getAbsolutePath);
+        const char* app_dir = env->GetStringUTFChars(jpath, NULL);
+
+        result = app_dir;
+
+        env->ReleaseStringUTFChars(jpath, app_dir);
+
+        vm->DetachCurrentThread();
+    }
+
+    return result.c_str();
+}
+
+const char * Platform::getAppPrivateFolderPath()
+{
+    static std::string result;
+
+    if (result.empty())
+    {
+        android_app* app = __state;
+        JNIEnv* env = app->activity->env;
+        JavaVM* vm = app->activity->vm;
+        vm->AttachCurrentThread(&env, NULL);
+
+        jclass classActivity = env->GetObjectClass(app->activity->clazz);
+
+        jmethodID getFilesDir = env->GetMethodID(classActivity, "getFilesDir", "()Ljava/io/File;");
+        jobject file = env->CallObjectMethod(app->activity->clazz, getFilesDir);
+        jclass fileClass = env->FindClass("java/io/File");
+        jmethodID getAbsolutePath = env->GetMethodID(fileClass, "getAbsolutePath", "()Ljava/lang/String;");
+        jstring jpath = (jstring)env->CallObjectMethod(file, getAbsolutePath);
+        const char* app_dir = env->GetStringUTFChars(jpath, NULL);
+
+        result = app_dir;
+
+        env->ReleaseStringUTFChars(jpath, app_dir);
+
+        vm->DetachCurrentThread();
+    }
+
+    return result.c_str();
+}
+
 }
 
 extern "C"
