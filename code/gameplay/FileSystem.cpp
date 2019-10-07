@@ -7,20 +7,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef WIN32
-    #include <windows.h>
-    #include <tchar.h>
-    #include <stdio.h>
-    #include <direct.h>
-    #define gp_stat _stat
-    #define gp_stat_struct struct stat
-#else
-    #define __EXT_POSIX2
-    #include <libgen.h>
-    #include <dirent.h>
-    #define gp_stat stat
-    #define gp_stat_struct struct stat
-#endif
+#define __EXT_POSIX2
+#include <libgen.h>
+#include <dirent.h>
+#define gp_stat stat
+#define gp_stat_struct struct stat
 
 #ifdef __ANDROID__
 #include <android/asset_manager.h>
@@ -250,39 +241,6 @@ const char* FileSystem::resolvePath(const char* path)
 
 bool FileSystem::listFiles(const char* dirPath, std::vector<std::string>& files)
 {
-#ifdef WIN32
-    std::string path(FileSystem::getResourcePath());
-    if (dirPath && strlen(dirPath) > 0)
-    {
-        path.append(dirPath);
-    }
-    path.append("/*");
-    // Convert char to wchar
-    std::basic_string<TCHAR> wPath;
-    wPath.assign(path.begin(), path.end());
-
-    WIN32_FIND_DATA FindFileData;
-    HANDLE hFind = FindFirstFile(wPath.c_str(), &FindFileData);
-    if (hFind == INVALID_HANDLE_VALUE) 
-    {
-        return false;
-    }
-    do
-    {
-        // Add to the list if this is not a directory
-        if ((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == 0)
-        {
-            // Convert wchar to char
-            std::basic_string<TCHAR> wfilename(FindFileData.cFileName);
-            std::string filename;
-            filename.assign(wfilename.begin(), wfilename.end());
-            files.push_back(filename);
-        }
-    } while (FindNextFile(hFind, &FindFileData) != 0);
-
-    FindClose(hFind);
-    return true;
-#else
     std::string path(FileSystem::getResourcePath());
     if (dirPath && strlen(dirPath) > 0)
     {
@@ -337,7 +295,6 @@ bool FileSystem::listFiles(const char* dirPath, std::vector<std::string>& files)
 #endif
 
     return result;
-#endif
 }
 
 bool FileSystem::fileExists(const char* filePath)
@@ -460,16 +417,7 @@ bool FileSystem::isAbsolutePath(const char* filePath)
 {
     if (filePath == 0 || filePath[0] == '\0')
         return false;
-#ifdef WIN32
-    if (filePath[1] != '\0')
-    {
-        char first = filePath[0];
-        return (filePath[1] == ':' && ((first >= 'a' && first <= 'z') || (first >= 'A' && first <= 'Z')));
-    }
-    return false;
-#else
     return filePath[0] == '/';
-#endif
 }
 
 void FileSystem::setAssetPath(const char* path)
@@ -540,25 +488,6 @@ std::string FileSystem::getDirectoryName(const char* path)
     {
         return "";
     }
-#ifdef WIN32
-    char drive[_MAX_DRIVE];
-    char dir[_MAX_DIR];
-    _splitpath(path, drive, dir, NULL, NULL);
-    std::string dirname;
-    size_t driveLength = strlen(drive);
-    if (driveLength > 0)
-    {
-        dirname.reserve(driveLength + strlen(dir));
-        dirname.append(drive);
-        dirname.append(dir);
-    }
-    else
-    {
-        dirname.assign(dir);
-    }
-    std::replace(dirname.begin(), dirname.end(), '\\', '/');
-    return dirname;
-#else
     // dirname() modifies the input string so create a temp string
     std::string dirname;
     char* tempPath = new char[strlen(path) + 1];
@@ -572,7 +501,6 @@ std::string FileSystem::getDirectoryName(const char* path)
     }
     SAFE_DELETE_ARRAY(tempPath);
     return dirname;
-#endif
 }
 
 std::string FileSystem::getExtension(const char* path)

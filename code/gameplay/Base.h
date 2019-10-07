@@ -69,23 +69,13 @@ extern int strcmpnocase(const char* s1, const char* s2);
 }
 
 // Current function macro.
-#ifdef WIN32
-#define __current__func__ __FUNCTION__
-#else
 #define __current__func__ __func__
-#endif
 
 // Assert macros.
 #ifdef _DEBUG
 #define GP_ASSERT(expression) assert(expression)
 #else
 #define GP_ASSERT(expression)
-#endif
-
-#if defined(WIN32) && defined(_MSC_VER)
-#define DEBUG_BREAK() __debugbreak()
-#else
-#define DEBUG_BREAK()
 #endif
 
 // Error macro.
@@ -97,7 +87,6 @@ extern int strcmpnocase(const char* s1, const char* s2);
         gameplay::Logger::log(gameplay::Logger::LEVEL_ERROR, "%s -- ", __current__func__); \
         gameplay::Logger::log(gameplay::Logger::LEVEL_ERROR, __VA_ARGS__); \
         gameplay::Logger::log(gameplay::Logger::LEVEL_ERROR, "\n"); \
-        DEBUG_BREAK(); \
         assert(0); \
         std::exit(-1); \
     } while (0)
@@ -109,6 +98,14 @@ extern int strcmpnocase(const char* s1, const char* s2);
         gameplay::Logger::log(gameplay::Logger::LEVEL_WARN, "%s -- ", __current__func__); \
         gameplay::Logger::log(gameplay::Logger::LEVEL_WARN, __VA_ARGS__); \
         gameplay::Logger::log(gameplay::Logger::LEVEL_WARN, "\n"); \
+    } while (0)
+
+// Info macro.
+#define GP_INFO(...) do \
+    { \
+        gameplay::Logger::log(gameplay::Logger::LEVEL_INFO, "%s -- ", __current__func__); \
+        gameplay::Logger::log(gameplay::Logger::LEVEL_INFO, __VA_ARGS__); \
+        gameplay::Logger::log(gameplay::Logger::LEVEL_INFO, "\n"); \
     } while (0)
 
 // Bullet Physics
