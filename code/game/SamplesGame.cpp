@@ -19,6 +19,7 @@ void SamplesGame::initialize()
     // Display the gameplay splash screen for at least 1 second.
     displayScreen(this, &SamplesGame::drawSplash, NULL, 1000L);
 
+    GP_INFO("ResourcePath %s\n", FileSystem::getResourcePath());
     GP_INFO("TemporaryFolderPath %s\n", getTemporaryFolderPath());
     GP_INFO("DocumentsFolderPath %s\n", getDocumentsFolderPath());
     GP_INFO("AppPrivateFolderPath %s\n", getAppPrivateFolderPath());
